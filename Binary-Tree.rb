@@ -23,7 +23,7 @@ class Node
     end
 
     def is_leaf
-        if left == nil && right ==nil
+        if @left == nil && @right ==nil
             return true
         else
             return false
@@ -33,8 +33,8 @@ class Node
     def find_min
         if @left==nil
             return self
-        elsif left.left.is_leaf
-            return left.left
+        elsif left.is_leaf
+            return left
         else
            min= left.find_min
         end
@@ -100,48 +100,70 @@ class Tree
         
             
     end
-    def delete(root=@root,value)
-        temp_node=Node.new(Value)
+    def delete(root,value)
+       
 
         if root == nil
+            
             return root
 
-        elsif temp_node<root
-               root.left= delete(root.left,value)
-            elsif temp_node>root
+        elsif value<root.value
+            
+                left_val=delete(root.left,value)
+                
+                if left_val==nil
+                    root.left= nil
+                else
+                    root.left=left_val
+                end
+            elsif value>root.value
                root.right=delete(root.right,value)
             
         else
             if root.is_leaf
-                root =null
+                
+                root = nil
+                
+                puts preorder
+                
+                
+                
                 
     
-            elsif root.left==null
+            elsif root.left==nil
+                
                 temp=root
                 root=root.right
-                temp = null
+                temp = nil
                 
-            elsif root.right==null
+            elsif root.right==nil
+                
                 temp=root
                 root=root.left
-                temp = null
+                temp = nil
                 
             else
-                temp  = root.right.find_min
-                root.value=temp.value
-                root.right=delete(root.right,temp.value)
+                 
+               
+                temp_val  = root.right.find_min.value
+                
+                root.value=temp_val
+                
+                root.right=delete(root.right,temp_val)
+                
             end
-
             
+            return root
 
             
         end
-        
+       
 
 
     end
 
     def preorder(root=@root)
+        
         if root == nil 
             return
         end
@@ -150,16 +172,37 @@ class Tree
         preorder(root.right)
 
     end
+    def inorder(root=@root)
+        
 
-            
+
+        if root==nil 
+            return
+        end
+        inorder(root.left)
+        puts root
+        inorder(root.right)
+    end
+
+    def postorder(root=@root)
+        if root==nil 
+            return
+        end
+        postorder(root.left)
+        postorder(root.right)
+        puts root
+    end            
 
 end
 
 arr=[7,5,6,3,2,1,8,10]
 my_tree=Tree.new(arr)
-# my_tree.insert(4)
+my_tree.insert(9)
 
-my_tree.preorder(my_tree.root)
-my_tree.insert(4)
+my_tree.delete(my_tree.root,3)
+puts "Preorder: "
 my_tree.preorder
+puts "Inorder: "
+my_tree.inorder
+
 
