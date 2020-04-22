@@ -1,12 +1,12 @@
 class Node
     include Comparable
-    attr_accessor :value, :left, :right, :parent
+    attr_accessor :value, :left, :right
 
     def initialize(value)
         @value=value
         @left=nil
         @right=nil
-        @parent=nil
+        
     end
 
     def <=>(other)
@@ -41,7 +41,7 @@ class Node
         return min
     end
 
-
+    
 end
 
 class Tree
@@ -193,16 +193,81 @@ class Tree
         puts root
     end            
 
+    def level_order(root)
+        node_queue=[]
+        if root == nil
+            return
+        end
+
+        node_queue.push(root)
+        while node_queue.length>0
+            current_node= node_queue.shift
+            node_queue.push(current_node.left) unless current_node.left ==nil
+            node_queue.push(current_node.right) unless current_node.right ==nil
+            puts current_node
+        end
+
+
+    end
+
+    def find(root=@root,value)
+       
+
+        if root == nil 
+            return
+        end
+
+        if value==root.value
+           puts "found"
+           return root
+            
+        end
+        
+       res1= find(root.left,value)
+       if res1 != nil
+        return res1
+       end
+
+       res2= find(root.right,value)
+       if res2 !=nil
+        return res2
+       end
+        
+
+        return "Item not found"
+    end
+    def depth(value,root=@root,height=0)
+        if root==nil 
+            return 0 
+        end
+
+        if root==value 
+            return height 
+        end
+        
+        level= depth(value,root.left,height+1)
+
+        if level!=0 
+            return level
+         end
+
+        return depth(value,root.right, height+1)
+
+        
+    end
 end
 
 arr=[7,5,6,3,2,1,8,10]
 my_tree=Tree.new(arr)
-my_tree.insert(9)
+# my_tree.insert(9)
 
-my_tree.delete(my_tree.root,3)
-puts "Preorder: "
-my_tree.preorder
-puts "Inorder: "
-my_tree.inorder
+# my_tree.delete(my_tree.root,3)
+# puts "Preorder: "
+# my_tree.preorder
+# puts "Inorder: "
+# my_tree.inorder
 
+my_tree.level_order(my_tree.root)
+puts my_tree.find(my_tree.root,12)
+puts my_tree.depth(5)
 
