@@ -193,7 +193,7 @@ class Tree
         puts root
     end            
 
-    def level_order(root)
+    def level_order(root=@root)
         node_queue=[]
         if root == nil
             return
@@ -217,14 +217,17 @@ class Tree
             return
         end
 
+        
+
         if value==root.value
-           puts "found"
+           
            return root
             
         end
         
        res1= find(root.left,value)
        if res1 != nil
+        
         return res1
        end
 
@@ -234,40 +237,117 @@ class Tree
        end
         
 
-        return "Item not found"
+        return nil
     end
-    def depth(value,root=@root,height=0)
-        if root==nil 
-            return 0 
+    def depth(value)
+        root=find(value)
+        
+        
+        if value == nil
+            puts "value does not exist"
+        else
+            
+            return get_depth(root)
         end
 
-        if root==value 
-            return height 
+        
+    end
+
+    def get_depth(root,height=0,max_height=0)
+        if root == nil
+            return max_height
+        end
+        #puts "root: #{root} left: #{root.left} right: #{root.right} height: #{height} max: #{max_height}"
+        if height > max_height
+            max_height=height
         end
         
-        level= depth(value,root.left,height+1)
-
-        if level!=0 
-            return level
-         end
-
-        return depth(value,root.right, height+1)
-
+        if root.is_leaf
+            #return 0
+            return max_height
+        else
+            #puts "height: #{height} max: #{max_height}"
+            # if height > max_height
+            #     max_height=height
+            # end
+            height+=1
+            max_height=get_depth(root.left,height,max_height)
+            
+            max_height=get_depth(root.right,height,max_height)
+            
+            return max_height
+        end
         
+        # get_depth(root.left,height+1)
+        # get_depth(root.right,height+1)
+
+        return max_height
+
+
+    end
+
+    def balanced?()
+        left_depth=get_depth(@root.left)
+        right_depth=get_depth(@root.right)
+
+        diff=(left_depth-right_depth).abs()
+
+        if diff <= 1
+            return true
+        else
+            return false
+        end
+
+    end
+
+    def rebalance!()
+        node_queue=[]
+        level_arr=[]
+        if @root == nil
+            return
+        end
+
+        node_queue.push(@root)
+        while node_queue.length>0
+            current_node= node_queue.shift
+            node_queue.push(current_node.left) unless current_node.left ==nil
+            node_queue.push(current_node.right) unless current_node.right ==nil
+            level_arr.push(current_node.value)
+        end
+        
+        @root=build_tree(level_arr)
     end
 end
 
-arr=[7,5,6,3,2,1,8,10]
-my_tree=Tree.new(arr)
-# my_tree.insert(9)
 
-# my_tree.delete(my_tree.root,3)
-# puts "Preorder: "
-# my_tree.preorder
-# puts "Inorder: "
-# my_tree.inorder
+my_tree=Tree.new(Array.new(15) { rand(1..100) })
+puts my_tree.balanced?
 
-my_tree.level_order(my_tree.root)
-puts my_tree.find(my_tree.root,12)
-puts my_tree.depth(5)
+puts "Preorder traversal: "
+my_tree.preorder
+
+puts "Inorder traversal: "
+my_tree.inorder
+
+puts "Postorder traversal: "
+my_tree.postorder
+
+puts "Level order traversal: "
+my_tree.level_order
+
+my_tree.insert(101)
+my_tree.insert(105)
+my_tree.insert(111)
+
+puts "Is my tree balanced: #{my_tree.balanced?}"
+
+my_tree.rebalance!
+
+puts "Is my tree balanced: #{my_tree.balanced?}"
+
+
+
+
+
+
 
